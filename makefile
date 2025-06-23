@@ -168,6 +168,13 @@ COIPOCOMPONENTS = github.com/fengdotdev/golibs-coipocomponents
 
 .PHONY: sand init  fix get tag test playground sandbox examples vo_folder
 
+
+a:
+	go run cmd/play1/main.go
+b:
+	go run cmd/play2/main.go
+
+
 sand: 
 	go run cmd/playground/main.go
 
