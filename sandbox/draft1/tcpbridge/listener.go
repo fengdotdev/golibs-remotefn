@@ -3,11 +3,11 @@ package tcpbridge
 import (
 	"context"
 	"fmt"
+	"io"
 	"net"
 )
 
 func (b *TCPBridge) StartListening(ctx context.Context) error {
-
 	if b.listening {
 		return fmt.Errorf("TCPBridge is already listening")
 	}
@@ -22,28 +22,25 @@ func (b *TCPBridge) StartListening(ctx context.Context) error {
 	}
 	defer listener.Close()
 
-	buffer := make([]byte, 1024)
-
-	conn, err := listener.Accept()
-	if err != nil {
-		fmt.Printf("Error accepting connection: %v\n", err)
-		return fmt.Errorf("error accepting connection: %v", err)
-	}
-	defer conn.Close()
-
+	// Accept connections in a loop
 	for {
 		select {
 		case <-ctx.Done():
-
 			return ctx.Err()
 		default:
 			fmt.Printf("Listening on port %d...\n", b.inPort)
-			length, err := conn.Read(buffer)
+			conn, err := listener.Accept()
 			if err != nil {
-				return fmt.Errorf("error reading from connection: %v", err)
+				// Handle temporary errors (e.g., network interruptions) gracefully
+				if ctx.Err() != nil {
+					return ctx.Err()
+				}
+				fmt.Printf("Error accepting connection: %v\n", err)
+				continue
 			}
-			received := buffer[:length]
-			fmt.Printf("Received data: %s\n", string(received)) // change
+
+			// Handle each connection in a separate goroutine
+			go b.handleConnection(ctx, conn)
 		}
 	}
 
@@ -61,4 +58,29 @@ func (b *TCPBridge) StartListeningNoBlocking(ctx context.Context) (chan []byte, 
 	}()
 
 	return b.GetInChan(), errChan
+}
+
+func (b *TCPBridge) handleConnection(ctx context.Context, conn net.Conn) {
+	defer conn.Close()
+	buffer := make([]byte, 1024)
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			length, err := conn.Read(buffer)
+			if err != nil {
+				if err == io.EOF {
+					fmt.Printf("Connection closed by client\n")
+					return // Client closed the connection, exit this goroutine
+				}
+				fmt.Printf("Error reading from connection: %v\n", err)
+				return // Other errors, exit this goroutine
+			}
+			received := buffer[:length]
+			fmt.Printf("Received data: %s\n", string(received))
+			b.inChan <- received // Send data to inChan
+		}
+	}
 }

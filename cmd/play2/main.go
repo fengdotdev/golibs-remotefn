@@ -26,8 +26,9 @@ func main() {
 			err := myTCPBridge.StartSendingDirect(ctx, dataToSend)
 			if err != nil {
 				println("Error sending data:", err.Error())
+				cancel() // Cancel context on error to stop the loop
 			} else {
-				println("Sent data:", string(dataToSend))
+				println("data was send:", string(dataToSend))
 			}
 		case <-ctx.Done():
 			println("Context cancelled, stopping...")
