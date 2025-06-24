@@ -1,9 +1,10 @@
-package remotefn_test
+package goregistryfn_test
 
 import (
 	"errors"
 	"testing"
 
+	"github.com/fengdotdev/golibs-remotefn/sandbox/draft1/goregistryfn"
 	"github.com/fengdotdev/golibs-remotefn/sandbox/draft1/remotefn"
 	"github.com/fengdotdev/golibs-testing/assert"
 )
@@ -23,9 +24,9 @@ func somecall(call string) ([]byte, error) {
 }
 
 func TestRegistryFn1(t *testing.T) {
-	reg := remotefn.NewRegistryFn()
+	reg := goregistryfn.NewRegistryFn()
 
-	contract := remotefn.ContractDTO{
+	contract := remotefn.Contract{
 		FunctionName: "add",
 		Params: remotefn.Params{
 			Params: []remotefn.Param{
@@ -46,7 +47,7 @@ func TestRegistryFn1(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Call the function
-	call := remotefn.CallDTO{
+	call := remotefn.Call{
 		FunctionName: "add",
 		Args: remotefn.Args{
 			Args: []remotefn.Arg{
@@ -64,9 +65,9 @@ func TestRegistryFn1(t *testing.T) {
 
 }
 func TestRegistryFn2(t *testing.T) {
-	reg := remotefn.NewRegistryFn()
+	reg := goregistryfn.NewRegistryFn()
 
-	contract := remotefn.ContractDTO{
+	contract := remotefn.Contract{
 		FunctionName: "somecall",
 		Params: remotefn.Params{
 			Params: []remotefn.Param{
@@ -88,7 +89,7 @@ func TestRegistryFn2(t *testing.T) {
 	inMsg := "foo"
 
 	// Call the function
-	call := remotefn.CallDTO{
+	call := remotefn.Call{
 		FunctionName: "somecall",
 		Args: remotefn.Args{
 			Args: []remotefn.Arg{

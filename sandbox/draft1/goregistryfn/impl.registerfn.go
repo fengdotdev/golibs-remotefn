@@ -1,41 +1,18 @@
-package remotefn
+package goregistryfn
 
 import (
 	"errors"
 	"log"
 	"reflect"
+
+	"github.com/fengdotdev/golibs-remotefn/sandbox/draft1/interfaces"
 )
 
+var _ interfaces.RegistryFn = NewRegistryFn()
 
-type RegistryFn struct {
-	functions map[string]interface{}
-	contracts map[string]ContractDTO
-}
-
-func NewRegistryFn() *RegistryFn {
-	return &RegistryFn{
-		functions: make(map[string]interface{}),
-		contracts: make(map[string]ContractDTO),
-	}
-}
-
-func (r *RegistryFn) Register(contract ContractDTO, fn any) error {
-
-	fnName := contract.FunctionName
-
-	// register only non-existent
-	_, ok := r.functions[fnName]
-	if ok {
-		return errors.New("fn already exist")
-	}
-
-	r.functions[fnName] = fn
-	r.contracts[fnName] = contract
-	return nil
-}
-
-func (r *RegistryFn) CallFn(call CallDTO) (ReplyDTO, error) {
-	var zero ReplyDTO
+// CallFn implements interfaces.RegistryFn.
+func (r *RegistryFn) CallFn(call Call) (Reply, error) {
+	var zero Reply
 
 	// Check if the function exists
 	fnName := call.FunctionName
@@ -76,7 +53,7 @@ func (r *RegistryFn) CallFn(call CallDTO) (ReplyDTO, error) {
 	results := fnVal.Call(args)
 
 	// Prepare reply
-	reply := ReplyDTO{Args: make([]Arg, len(contract.ReplyParams.Params))}
+	reply := Reply{Args: make([]Arg, len(contract.ReplyParams.Params))}
 	for i, result := range results {
 		if i >= len(contract.ReplyParams.Params) {
 			return zero, errors.New("unexpected number of return values")
@@ -91,4 +68,19 @@ func (r *RegistryFn) CallFn(call CallDTO) (ReplyDTO, error) {
 	}
 
 	return reply, nil
+}
+
+// Register implements interfaces.RegistryFn.
+func (r *RegistryFn) Register(contract Contract, fn any) error {
+	fnName := contract.FunctionName
+
+	// register only non-existent
+	_, ok := r.functions[fnName]
+	if ok {
+		return errors.New("fn already exist")
+	}
+
+	r.functions[fnName] = fn
+	r.contracts[fnName] = contract
+	return nil
 }

@@ -5,9 +5,9 @@ import (
 	"reflect"
 )
 
-func FnToCrontract(fn any, fnName string) (ContractDTO, error) {
+func FnToCrontract(fn any, fnName string) (Contract, error) {
 
-	var zero ContractDTO
+	var zero Contract
 
 	fnType := reflect.TypeOf(fn)
 	if fnType.Kind() != reflect.Func {
@@ -30,31 +30,9 @@ func FnToCrontract(fn any, fnName string) (ContractDTO, error) {
 		}
 	}
 
-	return ContractDTO{
+	return Contract{
 		FunctionName: fnName,
 		Params:       Params{Params: params},
 		ReplyParams:  ReplyParams{Params: replyParams},
-	}, nil
-}
-
-func FnToCall(fn any, raw_args interface{}) (CallDTO, error) {
-
-	var zero CallDTO
-
-	fnType := reflect.TypeOf(fn)
-	if fnType.Kind() != reflect.Func {
-		return zero, errors.New("provided value is not a function")
-	}
-	args := make([]Param, fnType.NumIn())
-	for i := 0; i < fnType.NumIn(); i++ {
-		args[i] = Param{
-			Name:      fnType.In(i).Name(),
-			ParamType: fnType.In(i).String(),
-		}
-	}
-
-	return CallDTO{
-		FunctionName: fnType.Name(),
-		Args:         Args{Args: args, RawArgs: raw_args},
 	}, nil
 }

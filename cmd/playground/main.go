@@ -10,7 +10,7 @@ func main() {
 	registry := remotefn.NewRegistryFn()
 
 	// Define a contract for a function like: func add(a int, b int) int
-	contract := remotefn.ContractDTO{
+	contract := remotefn.Contract{
 		FunctionName: "add",
 		Params: remotefn.Params{
 			Params: []remotefn.Param{
@@ -34,7 +34,7 @@ func main() {
 	}
 
 	// Call the function
-	call := remotefn.CallDTO{
+	call := remotefn.Call{
 		FunctionName: "add",
 		Args: remotefn.Args{
 			Args: []remotefn.Arg{
