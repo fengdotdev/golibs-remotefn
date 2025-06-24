@@ -1,6 +1,6 @@
 package remotefn
 
 type Call struct {
-	FunctionName string
-	Args         Args
+	CallFnName string `json:"call_fn_name"`
+	CallArgs   Args   `json:"call_args"`
 }

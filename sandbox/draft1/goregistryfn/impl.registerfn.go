@@ -15,7 +15,7 @@ func (r *RegistryFn) CallFn(call Call) (Reply, error) {
 	var zero Reply
 
 	// Check if the function exists
-	fnName := call.FunctionName
+	fnName := call.CallFnName
 	fnAny, exists := r.functions[fnName]
 	if !exists {
 		return zero, errors.New("function does not exist")
@@ -28,7 +28,7 @@ func (r *RegistryFn) CallFn(call Call) (Reply, error) {
 	}
 
 	// Validate arguments
-	if len(call.Args.Args) != len(contract.Params.Params) {
+	if len(call.CallArgs.ArgsArray) != len(contract.ConParams.Params) {
 		return zero, errors.New("argument count mismatch")
 	}
 
@@ -39,31 +39,31 @@ func (r *RegistryFn) CallFn(call Call) (Reply, error) {
 	}
 
 	// Prepare input arguments
-	args := make([]reflect.Value, len(call.Args.Args))
-	for i, arg := range call.Args.Args {
+	args := make([]reflect.Value, len(call.CallArgs.ArgsArray))
+	for i, arg := range call.CallArgs.ArgsArray {
 		// Validate argument name and type (simplified; you may need more robust type checking)
-		if i < len(contract.Params.Params) && arg.Name != contract.Params.Params[i].Name {
+		if i < len(contract.ConParams.Params) && arg.ArgName != contract.ConParams.Params[i].Name {
 			return zero, errors.New("argument name mismatch")
 		}
-		log.Println("value  =>> ", arg.Value)
-		args[i] = reflect.ValueOf(arg.Value)
+		log.Println("value  =>> ", arg.ArgValue)
+		args[i] = reflect.ValueOf(arg.ArgValue)
 	}
 
 	// Call the function
 	results := fnVal.Call(args)
 
 	// Prepare reply
-	reply := Reply{Args: make([]Arg, len(contract.ReplyParams.Params))}
+	reply := Reply{Args: make([]Arg, len(contract.ConReplyParams.Params))}
 	for i, result := range results {
-		if i >= len(contract.ReplyParams.Params) {
+		if i >= len(contract.ConReplyParams.Params) {
 			return zero, errors.New("unexpected number of return values")
 		}
 
 		log.Println(result)
 
 		reply.Args[i] = Arg{
-			Name:  contract.ReplyParams.Params[i].Name,
-			Value: result.Interface(),
+			ArgName:  contract.ConReplyParams.Params[i].Name,
+			ArgValue: result.Interface(),
 		}
 	}
 
@@ -72,7 +72,7 @@ func (r *RegistryFn) CallFn(call Call) (Reply, error) {
 
 // Register implements interfaces.RegistryFn.
 func (r *RegistryFn) Register(contract Contract, fn any) error {
-	fnName := contract.FunctionName
+	fnName := contract.ConFnName
 
 	// register only non-existent
 	_, ok := r.functions[fnName]

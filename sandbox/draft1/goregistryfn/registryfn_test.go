@@ -27,14 +27,14 @@ func TestRegistryFn1(t *testing.T) {
 	reg := goregistryfn.NewRegistryFn()
 
 	contract := remotefn.Contract{
-		FunctionName: "add",
-		Params: remotefn.Params{
+		ConFnName: "add",
+		ConParams: remotefn.Params{
 			Params: []remotefn.Param{
 				{Name: "a", ParamType: "int"},
 				{Name: "b", ParamType: "int"},
 			},
 		},
-		ReplyParams: remotefn.ReplyParams{
+		ConReplyParams: remotefn.ReplyParams{
 			Params: []remotefn.Param{
 				{Name: "result", ParamType: "int"},
 			},
@@ -48,11 +48,11 @@ func TestRegistryFn1(t *testing.T) {
 
 	// Call the function
 	call := remotefn.Call{
-		FunctionName: "add",
-		Args: remotefn.Args{
-			Args: []remotefn.Arg{
-				{Name: "a", Value: 1},
-				{Name: "b", Value: 2},
+		CallFnName: "add",
+		CallArgs: remotefn.Args{
+			ArgsArray: []remotefn.Arg{
+				{ArgName: "a", ArgValue: 1},
+				{ArgName: "b", ArgValue: 2},
 			},
 		},
 	}
@@ -60,7 +60,7 @@ func TestRegistryFn1(t *testing.T) {
 	reply, err := reg.CallFn(call)
 	assert.NoError(t, err)
 
-	value := reply.Args[0].Value
+	value := reply.Args[0].ArgValue
 	assert.Equal(t, value.(int), 3)
 
 }
@@ -68,13 +68,13 @@ func TestRegistryFn2(t *testing.T) {
 	reg := goregistryfn.NewRegistryFn()
 
 	contract := remotefn.Contract{
-		FunctionName: "somecall",
-		Params: remotefn.Params{
+		ConFnName: "somecall",
+		ConParams: remotefn.Params{
 			Params: []remotefn.Param{
 				{Name: "call", ParamType: "string"},
 			},
 		},
-		ReplyParams: remotefn.ReplyParams{
+		ConReplyParams: remotefn.ReplyParams{
 			Params: []remotefn.Param{
 				{Name: "error", ParamType: "error"},
 				{Name: "slice", ParamType: "[]byte"},
@@ -90,10 +90,10 @@ func TestRegistryFn2(t *testing.T) {
 
 	// Call the function
 	call := remotefn.Call{
-		FunctionName: "somecall",
-		Args: remotefn.Args{
-			Args: []remotefn.Arg{
-				{Name: "call", Value: inMsg},
+		CallFnName: "somecall",
+		CallArgs: remotefn.Args{
+			ArgsArray: []remotefn.Arg{
+				{ArgName: "call", ArgValue: inMsg},
 			},
 		},
 	}
@@ -101,11 +101,11 @@ func TestRegistryFn2(t *testing.T) {
 	reply, err := reg.CallFn(call)
 	assert.NoError(t, err)
 
-	err, _ = reply.Args[1].Value.(error)
+	err, _ = reply.Args[1].ArgValue.(error)
 
 	assert.NoError(t, err)
 
-	value, _ := reply.Args[0].Value.([]byte)
+	value, _ := reply.Args[0].ArgValue.([]byte)
 
 	str := string(value)
 

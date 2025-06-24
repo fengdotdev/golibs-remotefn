@@ -1,7 +1,7 @@
 package remotefn
 
 type Contract struct {
-	FunctionName string
-	Params       Params
-	ReplyParams  ReplyParams
+	ConFnName      string      `json:"con_fn_name"`
+	ConParams      Params      `json:"con_params"`
+	ConReplyParams ReplyParams `json:"con_reply_params"`
 }

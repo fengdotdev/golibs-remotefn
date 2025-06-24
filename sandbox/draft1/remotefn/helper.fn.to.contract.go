@@ -31,8 +31,8 @@ func FnToCrontract(fn any, fnName string) (Contract, error) {
 	}
 
 	return Contract{
-		FunctionName: fnName,
-		Params:       Params{Params: params},
-		ReplyParams:  ReplyParams{Params: replyParams},
+		ConFnName:      fnName,
+		ConParams:      Params{Params: params},
+		ConReplyParams: ReplyParams{Params: replyParams},
 	}, nil
 }

@@ -1,5 +1,5 @@
 package remotefn
 
 type ReplyParams struct {
-	Params []Param
+	Params []Param `json:"params"`
 }

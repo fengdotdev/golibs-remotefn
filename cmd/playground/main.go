@@ -11,14 +11,14 @@ func main() {
 
 	// Define a contract for a function like: func add(a int, b int) int
 	contract := remotefn.Contract{
-		FunctionName: "add",
-		Params: remotefn.Params{
+		ConFnName: "add",
+		ConParams: remotefn.Params{
 			Params: []remotefn.Param{
 				{Name: "a", ParamType: "int"},
 				{Name: "b", ParamType: "int"},
 			},
 		},
-		ReplyParams: remotefn.ReplyParams{
+		ConReplyParams: remotefn.ReplyParams{
 			Params: []remotefn.Param{
 				{Name: "result", ParamType: "int"},
 			},
@@ -35,11 +35,11 @@ func main() {
 
 	// Call the function
 	call := remotefn.Call{
-		FunctionName: "add",
-		Args: remotefn.Args{
-			Args: []remotefn.Arg{
-				{Name: "a", Value: 1},
-				{Name: "b", Value: 2},
+		CallFnName: "add",
+		CallArgs: remotefn.Args{
+			ArgsArray: []remotefn.Arg{
+				{ArgName: "a", ArgValue: 1},
+				{ArgName: "b", ArgValue: 2},
 			},
 		},
 	}

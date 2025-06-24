@@ -1,5 +1,6 @@
 package remotefn
 
 type Reply struct {
-	Args []Arg
+	Args []Arg `json:"args"`
 }
+
