@@ -1,54 +1,29 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-
-	"github.com/fengdotdev/golibs-remotefn/sandbox/draft1/remotefn"
+	"reflect"
 )
 
+func Foo(a, b int) int {
+	return a + b
+}
+
 func main() {
-	registry := remotefn.NewRegistryFn()
-
-	// Define a contract for a function like: func add(a int, b int) int
-	contract := remotefn.Contract{
-		ConFnName: "add",
-		ConParams: remotefn.Params{
-			Params: []remotefn.Param{
-				{Name: "a", ParamType: "int"},
-				{Name: "b", ParamType: "int"},
-			},
-		},
-		ConReplyParams: remotefn.ReplyParams{
-			Params: []remotefn.Param{
-				{Name: "result", ParamType: "int"},
-			},
-		},
+	fnType := reflect.TypeOf(Foo)
+	if fnType.Kind() != reflect.Func {
+		panic(errors.New("provided value is not a function"))
 	}
 
-	// Register a function
-	addFn := func(a, b int) int { return a + b }
-	err := registry.Register(contract, addFn)
-	if err != nil {
-		fmt.Println("Register error:", err)
-		return
-	}
+	fmt.Println("Function Name:", fnType.Name())
+	fmt.Println("Number of Input Parameters:", fnType.NumIn())
+	for i := 0; i < fnType.NumIn(); i++ {
+		fmt.Println("Input Parameter:",)
 
-	// Call the function
-	call := remotefn.Call{
-		CallFnName: "add",
-		CallArgs: remotefn.Args{
-			ArgsArray: []remotefn.Arg{
-				{ArgName: "a", ArgValue: 1},
-				{ArgName: "b", ArgValue: 2},
-			},
-		},
-	}
+		fmt.Println( fnType.In(i).Field())
 
-	reply, err := registry.CallFn(call)
-	if err != nil {
-		fmt.Println("Call error:", err)
-		return
+		paramType := fnType.In(i)
+		fmt.Printf("Parameter %d: %s (%s)\n", i+1, paramType.Name(), paramType.String())
 	}
-
-	fmt.Println("Result:", reply.Args[0].Value) // Output: Result: 3
 }
