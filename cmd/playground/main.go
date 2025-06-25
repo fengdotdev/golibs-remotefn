@@ -10,8 +10,10 @@ func main() {
 
 	result, err := playclient.AddRemote(1, 2)
 	if err != nil {
-		panic(fmt.Sprintf("Error in addRemote: %v", err))
+		fmt.Println("Error:", err)
+	} else {
+		println("Result:", result)
+
 	}
-	println("Result:", result)
 
 }
