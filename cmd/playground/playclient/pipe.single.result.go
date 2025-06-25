@@ -6,19 +6,6 @@ import (
 	"github.com/fengdotdev/golibs-remotefn/sandbox/draf2/remote"
 )
 
-func FooRemote(a, b int) (int, error) {
-	m := map[string]interface{}{
-		"a": a,
-		"b": b,
-	}
-	value, err := PipeSingleResult[int]("Foo", m)
-	if err != nil {
-		return 0, err
-	}
-
-	return value, nil
-}
-
 func PipeSingleResult[T any](key string, m map[string]interface{}) (T, error) {
 	var zero T
 	data, err := remote.MapToDataOnJson(m)
@@ -26,8 +13,7 @@ func PipeSingleResult[T any](key string, m map[string]interface{}) (T, error) {
 		return zero, err
 	}
 
-	exec := NewDataExec()
-	outdata, err := exec.DataInOut(key, data)
+	outdata, err := DataInOut(key, data)
 	if err != nil {
 		return zero, err
 	}

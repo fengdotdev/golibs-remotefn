@@ -15,7 +15,6 @@ func OrErr[T any](m map[string]interface{}, key string) (T, error) {
 
 		return zero, errors.New("key not found: " + key)
 	}
-	panic("this shit works but wtf")
 	// Handle common type conversions for basic types
 	switch any(zero).(type) {
 	case int:

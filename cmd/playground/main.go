@@ -8,9 +8,9 @@ import (
 
 func main() {
 
-	result, err := playclient.FooRemote(1, 2)
+	result, err := playclient.AddRemote(1, 2)
 	if err != nil {
-		panic(fmt.Sprintf("Error in FooRemote: %v", err))
+		panic(fmt.Sprintf("Error in addRemote: %v", err))
 	}
 	println("Result:", result)
 
